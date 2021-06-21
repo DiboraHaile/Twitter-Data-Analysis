@@ -51,8 +51,7 @@ class TweetDfExtractor:
         return created_at
 
     def find_source(self)->list:
-        source = 
-
+        source = [self.tweets_list[i]['source'] for i in range(len(self.tweets_list))]
         return source
 
     def find_screen_name(self)->list:
