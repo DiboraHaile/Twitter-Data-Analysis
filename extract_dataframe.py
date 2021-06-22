@@ -39,16 +39,13 @@ class TweetDfExtractor:
         return statuses_count
         
     def find_full_text(self)->list:
-        text = ""
-        text_list = [self.tweets_list[i]['retweeted_status']['extended_tweet']['full_text'] for i in range(len(self.tweets_list))]
-        for full_text in text_list:
-            text += full_text
+        text = [self.tweets_list[i]['retweeted_status']['extended_tweet']['full_text'] for i in range(len(self.tweets_list))]
         return text  
        
     
     def find_sentiments(self, text)->list:
-        polarity = TextBlob(text).sentiment.subjectivity
-        subjectivity = TextBlob(text).sentiment.polarity
+        polarity = [TextBlob(full_text).sentiment.subjectivity for full_text in text]
+        subjectivity = [TextBlob(full_text).sentiment.polarity for full_text in text]
         return polarity, subjectivity
 
     def find_created_time(self)->list:
@@ -75,12 +72,12 @@ class TweetDfExtractor:
         try:
             is_sensitive = [x['possibly_sensitive'] for x in self.tweets_list]
         except KeyError:
-            is_sensitive = None
+            is_sensitive = [None for i in range(len(self.tweets_list))]
 
         return is_sensitive
 
     def find_favourite_count(self)->list:
-        favourite_count = [self.tweets_list[i]['favorite_count'] for i in range(len(self.tweets_list))]
+        favourite_count = [self.tweets_list[i]['retweeted_status']['favorite_count'] for i in range(len(self.tweets_list))]
         return favourite_count
         
     
@@ -103,7 +100,7 @@ class TweetDfExtractor:
 
     def find_location(self)->list:
         try:
-            location = self.tweets_list['user']['location']
+            location = [tweet_list['user']['location'] for tweet_list in self.tweets_list]
         except TypeError:
             location = ''
         
