@@ -120,9 +120,9 @@ class TweetDfExtractor:
     def find_mentions(self)->list:
         mentions = []
         for i in range(len(self.tweets_list)):
-            values = ""
+            values = []
             for lists in self.tweets_list[i]['entities']['user_mentions']:
-                values += lists['screen_name']
+                values.append(lists['screen_name']) 
             mentions.append(values)
         return mentions
 
@@ -180,4 +180,4 @@ if __name__ == "__main__":
     tweet = TweetDfExtractor(tweet_list)
     tweet_full = tweet.find_full_text()
     tweet_df = tweet.get_tweet_df() 
-    print(tweet_df[:10])
+    # print(tweet_df['user_mentions'][:5])
