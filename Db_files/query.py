@@ -50,7 +50,12 @@ def insert_data(df: pd.DataFrame,table_name):
         conn.commit() 
     cur.close()
 
-# def fetch_al
+def drop_table(table_name):
+    conn, cur = connection_DB()
+    drop_query = "DROP TABLE IF EXISTS "+table_name
+    cur.execute(drop_query)
+    conn.commit()
+    cur.close()
 
 def fetch_data(table_name):
     conn, cur = connection_DB()
@@ -59,7 +64,7 @@ def fetch_data(table_name):
     values =cur.execute(select_query)
     for desc in cur.description:
         colmn_names.append(desc[0])
-        
+
     conn.commit()
     df = pd.DataFrame(values, columns=colmn_names)
     cur.close()
@@ -70,6 +75,7 @@ if __name__ == '__main__':
     df = pd.read_csv('processed_tweet_data.csv')
     df_new = prepare_df(df)
     # print(df_new.columns)
-    print(fetch_data('twitter_data'))
+    drop_table('hello')
+    # print(fetch_data('twitter_data'))
     
     # insert_data(df_new,'twitter_data')
