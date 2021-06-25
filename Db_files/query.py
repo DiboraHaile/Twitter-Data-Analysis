@@ -55,14 +55,21 @@ def insert_data(df: pd.DataFrame,table_name):
 def fetch_data(table_name):
     conn, cur = connection_DB()
     colmn_names = []
+    select_query = "select * FROM "+table_name
+    values =cur.execute(select_query)
     for desc in cur.description:
         colmn_names.append(desc[0])
-    df = pd.DataFrame(cur.fetchall(), columns=colmn_names)
+        
+    conn.commit()
+    df = pd.DataFrame(values, columns=colmn_names)
+    cur.close()
     return df
 
 if __name__ == '__main__':
-    create_table('twitter_data')
+    # create_table('twitter_data')
     df = pd.read_csv('processed_tweet_data.csv')
     df_new = prepare_df(df)
-    print(df_new.columns)
-    insert_data(df_new,'twitter_data')
+    # print(df_new.columns)
+    print(fetch_data('twitter_data'))
+    
+    # insert_data(df_new,'twitter_data')
