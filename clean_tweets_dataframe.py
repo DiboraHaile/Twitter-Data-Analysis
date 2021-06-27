@@ -1,3 +1,6 @@
+import pandas as pd
+
+
 class Clean_Tweets:
     """
     The PEP8 Standard AMAZING!!!
@@ -5,31 +8,18 @@ class Clean_Tweets:
     def __init__(self, df:pd.DataFrame):
         self.df = df
         print('Automation in Action...!!!')
-        
-    def drop_unwanted_column(self, df:pd.DataFrame)->pd.DataFrame:
-        """
-        remove rows that has column names. This error originated from
-        the data collection stage.  
-        """
-        unwanted_rows = df[df['retweet_count'] == 'retweet_count' ].index
-        df.drop(unwanted_rows , inplace=True)
-        df = df[df['polarity'] != 'polarity']
-        
-        return df
-    def drop_duplicate(self, df:pd.DataFrame)->pd.DataFrame:
+
+    def drop_duplicate(self)->pd.DataFrame:
         """
         drop duplicate rows
-        """
-        df = df.drop_duplicates()        
-        return df
+        """        
+        return self.df.drop_duplicates()
+
     def convert_to_datetime(self, df:pd.DataFrame)->pd.DataFrame:
         """
         convert column to datetime
         """
-        
-        df = pd.to_datetime(df)
-        df = df[df['created_at'] >= '2020-12-31' ]
-        
+        df['created_at'] = pd.to_datetime(self.df['created_at'])
         return df
     
     def convert_to_numbers(self, df:pd.DataFrame)->pd.DataFrame:
@@ -37,18 +27,36 @@ class Clean_Tweets:
         convert columns like polarity, subjectivity, retweet_count
         favorite_count etc to numbers
         """
-        df['polarity'] = pd.to_numeric(df['polarity'])
-        df['subjectivity'] = pd.to_numeric(df['subjectivity'])
-        df['retweet_count'] = pd.to_numeric(df['retweet_count'])
-        df['favorite_count'] = pd.to_numeric(df['favorite_count'])
+        df['polarity'] = pd.to_numeric(self.df['polarity'])
+        df['subjectivity'] = pd.to_numeric(self.df['subjectivity'])
+        df['retweet_count'] = pd.to_numeric(self.df['retweet_count'])
+        df['favorite_count'] = pd.to_numeric(self.df['favorite_count'])
         
         return df
+
+    def drop_null_col(self, df:pd.DataFrame)->pd.DataFrame:
+        # removed columns containing null values of more than 20%
+        row,col = df.shape
+        df.dropna(axis='columns',thresh=row*0.8,inplace=True)
+        print(df.columns)
+        return df
+        
     
     def remove_non_english_tweets(self, df:pd.DataFrame)->pd.DataFrame:
         """
         remove non english tweets from lang
         """
-        
-        df = df[df['lang'] == 'en']
-        
+        df_new = df[df.lang == "en"]
+        return df_new
+
+    def special_chars(self,x):
+        special_characters = '@_!#$%^&*()<>?/\|}{~:;[]'
+        for char in special_characters:
+            x = x.replace(char, '')
+        x = x.encode('ascii', 'ignore').decode('ascii')
+        return x
+
+    def filter_text(self,df:pd.DataFrame) ->pd.DataFrame:
+        df['original_text'] = self.df['original_text'].apply(lambda x: self.special_chars(x))
+        # print(df['original_text'])
         return df
