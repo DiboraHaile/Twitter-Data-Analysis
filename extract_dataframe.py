@@ -2,6 +2,7 @@ import json
 import pandas as pd
 from textblob import TextBlob
 
+
 def read_json(json_file: str)->list:
     """
     json file reader to open and read json files into a list
@@ -164,7 +165,7 @@ class TweetDfExtractor:
     
         data = list(zip(created_at, source, text, polarity, subjectivity, lang, fav_count, retweet_count, screen_name, follower_count, friends_count, sensitivity, hashtags, mentions, location))
         df = pd.DataFrame(data=data, columns=columns)
-
+        
         if save:
             df.to_csv('processed_tweet_data.csv', index=False)
             print('File Successfully Saved.!!!')
@@ -174,10 +175,11 @@ class TweetDfExtractor:
                 
 if __name__ == "__main__":
     # required column to be generated you should be creative and add more features
-    columns = ['created_at', 'source', 'original_text','clean_text', 'sentiment','polarity','subjectivity', 'lang', 'favorite_count', 'retweet_count', 
-    'original_author', 'screen_count', 'followers_count','friends_count','possibly_sensitive', 'hashtags', 'user_mentions', 'place', 'place_coord_boundaries']
-    _, tweet_list = read_json("data/covid19.json")
-    tweet = TweetDfExtractor(tweet_list)
-    tweet_full = tweet.find_full_text()
-    tweet_df = tweet.get_tweet_df() 
-    # print(tweet_df['user_mentions'][:5])
+    # columns = ['created_at', 'source', 'original_text','clean_text', 'sentiment','polarity','subjectivity', 'lang', 'favorite_count', 'retweet_count', 
+    # 'original_author', 'screen_count', 'followers_count','friends_count','possibly_sensitive', 'hashtags', 'user_mentions', 'place', 'place_coord_boundaries']
+    # _, tweet_list = read_json("data/covid19.json")
+    # tweet = TweetDfExtractor(tweet_list)
+    # tweet_full = tweet.find_full_text()
+    # tweet_df = tweet.get_tweet_df()
+
+    # print(tweet_df['lang'][:25])
