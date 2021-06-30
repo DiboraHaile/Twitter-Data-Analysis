@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import query
 import wordcloud
+# import plotly.figure_factory as ff
+import numpy as np
 from wordcloud import WordCloud
 
 
@@ -27,6 +29,7 @@ def plotbar_graph(df,title,header):
     st.write(title)
     st.bar_chart(df)
 
+# def select_tweets():
 
 
 def select_attributes_Df():
@@ -42,6 +45,11 @@ def select_attributes_Df():
     else:
         st.write(df) 
 
+def select_tweets():
+    df = display_df('twitter_data1')
+    st.markdown("<h2 style='color: gray;background-color:rgb(0, 20, 34);'> Select information of an author</h2>", unsafe_allow_html=True)
+    hobby = st.selectbox("Author's name: ",df['original_author'])
+    st.write(df[df['original_author'] == hobby])
 
 def toggle_bn_pages():
     pages = ['Display Data Information ','Visualize ']
@@ -50,6 +58,7 @@ def toggle_bn_pages():
     if option == pages[0]:
         st.markdown("<h1 style='color: gray;'>"+option+"of Twitter Data</h1>", unsafe_allow_html=True)
         select_attributes_Df()
+        select_tweets()
 
     else:
         st.markdown("<h1 style='color: gray;'>"+option+"Twitter Data</h1>", unsafe_allow_html=True)
@@ -62,11 +71,11 @@ def toggle_bn_pages():
         
         df_authors = pd.DataFrame({'popular authors':df.groupby(['original_author'])['followers_count'].max()}).reset_index()
         df_authors = df_authors.sort_values(['popular authors'],ascending=False)
-        level = st.slider("Select the level", 1, 20)
+        level = st.slider("Select", 1, 20)
         if level == 1:
-            st.markdown("<h2 style='color: gray;'>Displaying the most popular author based on their follower count</h2>", unsafe_allow_html=True)
+            st.markdown("<h2 style='color: gray;background-color:rgb(0, 20, 34);'>Displaying the most popular author based on their follower count</h2>", unsafe_allow_html=True)
         else:
-            st.markdown("<h2 style='color: gray;'>Displaying top "+str(level)+" authors based on their follower count</h2>", unsafe_allow_html=True)
+            st.markdown("<h2 style='color: gray;background-color:rgb(0, 20, 34);'>Displaying top "+str(level)+" authors based on their follower count</h2>", unsafe_allow_html=True)
         col1, col2 = st.beta_columns([4,2])
         with col1:
             plotbar_graph(df_authors.head(level),'','')
