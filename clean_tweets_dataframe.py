@@ -15,7 +15,7 @@ class Clean_Tweets:
         """        
         return self.df.drop_duplicates()
 
-    def convert_to_datetime(self, df:pd.DataFrame)->pd.DataFrame:
+    def convert_to_datetime(self,df)->pd.DataFrame:
         """
         convert column to datetime
         """
@@ -31,7 +31,7 @@ class Clean_Tweets:
         df['subjectivity'] = pd.to_numeric(self.df['subjectivity'])
         df['retweet_count'] = pd.to_numeric(self.df['retweet_count'])
         df['favorite_count'] = pd.to_numeric(self.df['favorite_count'])
-        
+        df['followers_count'] = pd.to_numeric(self.df['followers_count'])
         return df
 
     def drop_null_col(self, df:pd.DataFrame)->pd.DataFrame:
@@ -41,13 +41,6 @@ class Clean_Tweets:
         print(df.columns)
         return df
         
-    
-    def remove_non_english_tweets(self, df:pd.DataFrame)->pd.DataFrame:
-        """
-        remove non english tweets from lang
-        """
-        df_new = df[df.lang == "en"]
-        return df_new
 
     def special_chars(self,x):
         special_characters = '@_!#$%^&*()<>?/\|}{~:;[]'
@@ -60,3 +53,12 @@ class Clean_Tweets:
         df['original_text'] = self.df['original_text'].apply(lambda x: self.special_chars(x))
         # print(df['original_text'])
         return df
+
+    def clean_dataframe(self):
+        df_duplicatedropped = self.drop_duplicate()
+        df_datetime = self.convert_to_datetime(df_duplicatedropped)
+        df_numb =  self.convert_to_numbers(df_datetime)
+        df_nulldroped = self.drop_null_col(df_numb)
+        df_cleaned = self.filter_text(df_nulldroped)
+        return df_cleaned
+    
