@@ -48,8 +48,8 @@ def select_attributes_Df():
 def select_tweets():
     df = display_df('twitter_data1')
     st.markdown("<h2 style='color: gray;background-color:rgb(0, 20, 34);'> Select information of an author</h2>", unsafe_allow_html=True)
-    hobby = st.selectbox("Author's name: ",df['original_author'])
-    st.write(df[df['original_author'] == hobby])
+    author_name = st.selectbox("Author's name: ",df['original_author'])
+    st.write(df[df['original_author'] == author_name])
 
 def toggle_bn_pages():
     pages = ['Display Data Information ','Visualize ']
