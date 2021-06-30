@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import query
 import wordcloud
-# import plotly.figure_factory as ff
+import plotly.express as px
 import numpy as np
 from wordcloud import WordCloud
 
@@ -35,7 +35,7 @@ def plotbar_graph(df,title,header):
 def select_attributes_Df():
     df = display_df('twitter_data1')
     display_options = st.selectbox("Choose the information to be displayed: ",
-                     ['Popular Authors', 'Top Hashtags ', 'Tweet polarity count', 'All data']) 
+                     ['Popular Authors', 'Tweet polarity count', 'All data']) 
     if display_options == 'Popular Authors':
         df_authors = df.sort_values(by=['followers_count'],ascending=False)
         popular_authors = df_authors[df_authors.followers_count > 10000]
@@ -65,24 +65,29 @@ def toggle_bn_pages():
         text = ""
         for rows in df["original_text"]:
             text += rows
+        st.markdown("<h2 style='color: gray;background-color:rgb(0, 20, 34);'>Display wordcloud</h2>", unsafe_allow_html=True)
         wordcloud = WordCloud().generate(text)
         st.image(wordcloud.to_array())
+        if st.checkbox("Show charts"):
         
-        
-        df_authors = pd.DataFrame({'popular authors':df.groupby(['original_author'])['followers_count'].max()}).reset_index()
-        df_authors = df_authors.sort_values(['popular authors'],ascending=False)
-        level = st.slider("Select", 1, 20)
-        if level == 1:
-            st.markdown("<h2 style='color: gray;background-color:rgb(0, 20, 34);'>Displaying the most popular author based on their follower count</h2>", unsafe_allow_html=True)
-        else:
-            st.markdown("<h2 style='color: gray;background-color:rgb(0, 20, 34);'>Displaying top "+str(level)+" authors based on their follower count</h2>", unsafe_allow_html=True)
-        col1, col2 = st.beta_columns([4,2])
-        with col1:
-            plotbar_graph(df_authors.head(level),'','')
-        with col2:    
-            st.write(df_authors['original_author'].head(level))
+            df_authors = pd.DataFrame({'popular authors':df.groupby(['original_author'])['followers_count'].max()}).reset_index()
+            df_authors = df_authors.sort_values(['popular authors'],ascending=False)
+            level = st.slider("Select", 1, 20)
+            if level == 1:
+                st.markdown("<h2 style='color: gray;background-color:rgb(0, 20, 34);'>Barchart of the most popular author based on follower count</h2>", unsafe_allow_html=True)
+            else:
+                st.markdown("<h2 style='color: gray;background-color:rgb(0, 20, 34);'>Barchart of top "+str(level)+" authors based on follower count</h2>", unsafe_allow_html=True)
+            col1, col2 = st.beta_columns([4,2])
+            with col1:
+                plotbar_graph(df_authors.head(level),'','')
+            with col2:    
+                st.write(df_authors['original_author'].head(level))
 
-        
+            df_polarity = pd.DataFrame({'polarity_count':df.groupby(['polarity_name'])['original_text'].count()}).reset_index()
+            st.markdown("<h2 style='color: gray;background-color:rgb(0, 20, 34);'>PieChart of Polarity count</h2>", unsafe_allow_html=True)
+            fig = px.pie(df_polarity, values='polarity_count',names='polarity_name', title='')
+            st.plotly_chart(fig)
+            # fig.show()
         
 
 
