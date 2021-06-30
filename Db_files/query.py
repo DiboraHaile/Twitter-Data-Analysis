@@ -2,10 +2,20 @@ import sqlite3
 from sqlite3 import Error
 import pandas as pd
 
+def map_polarity(x):
+    if x > 0:
+        return 'positive'
+    elif x < 0:
+        return 'negative'
+    else:
+        return 'neutral'
+
 def prepare_df(df):
-    cols_2_drop = ['source', 'place', 'possibly_sensitive']
-    df = df.drop(columns=cols_2_drop, axis=1)
-    df = df.fillna(0)
+    # cols_2_drop = ['source']
+    # df = df.drop(columns=cols_2_drop, axis=1)
+    df['polarity_name'] = df['polarity'].apply(lambda x: map_polarity(x))
+    df['followers_count'] = pd.to_numeric(df['followers_count'])
+    # df = df.fillna(0)
     return df
 
 
@@ -27,7 +37,6 @@ def create_table(table_name):
     original_author TEXT DEFAULT NULL,
     followers_count INT DEFAULT NULL,
     friends_count INT DEFAULT NULL,
-    hashtags TEXT DEFAULT NULL,
     user_mentions TEXT DEFAULT NULL)""" 
     conn, cur = connection_DB()
     cur.execute(create_query)
@@ -42,9 +51,9 @@ def insert_data(df: pd.DataFrame,table_name):
                                                 original_text, polarity, subjectivity,                                             
                                                 language,favorite_count,retweet_count,
                                                 original_author, followers_count,friends_count,
-                                                hashtags, user_mentions)values(?,?,?,?,?,?,?,?,?,?,?,?)"""
+                                                 user_mentions)values(?,?,?,?,?,?,?,?,?,?,?)"""
         to_be_inserted = (row[0],row[1],row[2],row[3],row[4],row[5],row[6],row[7],row[8],row[9],
-                          row[10],row[11])
+                          row[10])
 
         cur.execute(insert_query,to_be_inserted)
         conn.commit() 
@@ -70,12 +79,14 @@ def fetch_data(table_name):
     cur.close()
     return df
 
+# def 
+
 if __name__ == '__main__':
-    # create_table('twitter_data')
+    create_table('twitter_data2')
     df = pd.read_csv('processed_tweet_data.csv')
-    df_new = prepare_df(df)
+    # df_new = prepare_df(df)
+    # print(df)
     # print(df_new.columns)
-    drop_table('hello')
-    # print(fetch_data('twitter_data'))
-    
-    # insert_data(df_new,'twitter_data')
+    # drop_table('hello')
+    # print(fetch_data('twitter_data'))    
+    insert_data(df,'twitter_data2')
